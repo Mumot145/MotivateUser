@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MotivationUser.TodoPage">
+    <StackLayout>
+        <StackLayout  x:Name="toDoStack" IsVisible="False">
+            <ActivityIndicator HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" IsEnabled="True" x:Name="syncIndicator" />
+            <Label x:Name="groupName" HorizontalOptions="Center"/>
+            <Label x:Name="mustDo" FontSize="Large"  HorizontalOptions="Center" VerticalOptions="Center" />
+            <StackLayout >
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Done :" FontSize="Medium"/>
+                    <Switch x:Name="done" Toggled="done_Toggled"/>
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Later Today :" FontSize="Medium"/>
+                    <Switch x:Name="later"  />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Busy Today, Tomorrow's Okay :" FontSize="Medium"/>
+                    <Switch x:Name="tomorrow" />
+                </StackLayout>
+
+            </StackLayout>
+        </StackLayout>
+        <StackLayout  x:Name="doneStack" IsVisible="False" >
+            <Label Text="You're Done for now! Check back later!" FontSize="Large"  HorizontalOptions="Center" VerticalOptions="Center" />
+        </StackLayout>
+    </StackLayout>
+    
+</ContentPage>

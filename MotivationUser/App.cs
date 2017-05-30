@@ -2,11 +2,12 @@
 using System.Diagnostics;
 using Xamarin.Auth;
 using Xamarin.Forms;
-
+//using AzureNotificationHub;
 namespace MotivationUser
 {
 	public class App : Application
 	{
+        
         static string _Token;
         private string aToken = "";
         static string _UserId;

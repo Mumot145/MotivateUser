@@ -5,12 +5,12 @@ using Android.App;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("TodoAzure.Droid")]
+[assembly: AssemblyTitle ("AzureMessagingSampleAndroid")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("patrickmumot")]
+[assembly: AssemblyCopyright ("redth")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

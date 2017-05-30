@@ -21,7 +21,7 @@ namespace MotivationUser
 
         TodoItemManager manager;
         TodoItem currentItem;
-        AzureDataService _azure = new AzureDataService();
+        AzureDataService _azure;
         FacebookUser facebookUser = new FacebookUser();
         User currentUser = new User();
         string token;
@@ -29,7 +29,7 @@ namespace MotivationUser
         public TodoPage(string _token)
         {
             token = _token;
-           
+            _azure = AzureDataService.DefaultService;
             InitializeComponent();
         }
         protected override async void OnAppearing()
@@ -41,26 +41,24 @@ namespace MotivationUser
                 token = App.Token;
             } else
             {
-                await getFBInfo(token);
-                if (!String.IsNullOrEmpty(facebookUser.Id))
+                await _azure.getFBInfo(token);
+                currentUser = _azure.GetUser("fbId");
+                //App.PassData(currentUser.Id.ToString());
+                // App.SaveUserId(currentUser.Id.ToString());
+                if (currentUser == null)
                 {
-                    currentUser = _azure.GetUser(facebookUser.Id, "fbId");
-                    App.PassData(currentUser.Id.ToString());
-                   // App.SaveUserId(currentUser.Id.ToString());
+                    _azure.RegisterUser(facebookUser.Name, facebookUser.Id);
+                    currentUser = _azure.GetUser("fbId");
                     if (currentUser == null)
-                    {
-                        _azure.RegisterUser(facebookUser.Name, facebookUser.Id);
-                        currentUser = _azure.GetUser(facebookUser.Id, "fbId");
-                        if (currentUser == null)
-                            await Navigation.PushModalAsync(new LoginPage());
-                    }
-                
+                        await Navigation.PushModalAsync(new LoginPage());
                 }
+                
+                
                  refresh();
             }
             // Set syncItems to true in order to synchronize the data on startup when running in offline mode
             
-            // await RefreshItems(true, syncItems: false);
+           //  await RefreshItems(true, syncItems: false);
         }
         void refresh()
         {
@@ -72,7 +70,7 @@ namespace MotivationUser
             ChatGroup cGroup = _azure.GetGroup(currentUser.Id);
             double tDiff = 0.0;
             double lasttDiff = 0.0;
-            var todo = _azure.GetTodo(cGroup);   
+            
 
             if (_dateTime == null)
             {
@@ -93,8 +91,8 @@ namespace MotivationUser
 
             if (bDateTime == false)
             {
-                
-               
+                var todo = _azure.GetTodo(cGroup);
+
                 cGroup.toDos = todo.toDos;
                 Debug.WriteLine("resfreshing rn");
                 
@@ -106,19 +104,27 @@ namespace MotivationUser
                     var scTime = TimeSpan.Parse(cTime).TotalSeconds;
                     foreach (var td in todo.toDos)
                     {
-                        Debug.WriteLine("looking at time :" + td.SendTime);
+                       // Debug.WriteLine("looking at time :" + td.SendTime);
                         var checkTime = TimeSpan.Parse(td.SendTime).TotalSeconds;
-                        Debug.WriteLine("checkTime -" + checkTime);
-                        Debug.WriteLine("scTime -" + scTime);
+                       // Debug.WriteLine("checkTime -" + checkTime);
+                       // Debug.WriteLine("scTime -" + scTime);
                         tDiff = scTime - checkTime;
+                       // Debug.WriteLine("tDiff -" + tDiff);
+                       // Debug.WriteLine("TODOCHECK -" + td.ToDo);
                         if (tDiff > 0)
                         {
-                            if (tDiff < lasttDiff)
+                            Debug.WriteLine(tDiff + " < " + lasttDiff);
+                            if (tDiff < lasttDiff || lasttDiff == 0)
                             {
                                 currentItem = td;
                                 Debug.WriteLine("lowest item -" + currentItem.ToDo);
-                            }
+                            } 
 
+                        }
+                         else
+                        {
+                            doneStack.IsVisible = true;
+                            return;
                         }
                         lasttDiff = tDiff;
                     }
@@ -138,15 +144,7 @@ namespace MotivationUser
             doneStack.IsVisible = true;
         }
    
-        public async Task getFBInfo(string accessToken)
-        {
-            var requestUrl = "https://graph.facebook.com/v2.8/me/"
-                             + "?fields=name,picture,cover,age_range,devices,email,gender,is_verified"
-                             + "&access_token=" + accessToken;
-            var httpClient = new HttpClient();
-            var userJson = await httpClient.GetStringAsync(requestUrl);
-            facebookUser = JsonConvert.DeserializeObject<FacebookUser>(userJson);
-        }
+        
         public async void OnRefresh(object sender, EventArgs e)
         {
             var list = (ListView)sender;
@@ -173,7 +171,8 @@ namespace MotivationUser
         {
             using (var scope = new ActivityIndicatorScope(syncIndicator, showActivityIndicator))
             {
-               // mustDo.Text = await manager.GetTodoItemAsync(syncItems);
+                // mustDo.Text = await manager.GetTodoItemAsync(syncItems);
+                refresh();
             }
         }
         private class ActivityIndicatorScope : IDisposable

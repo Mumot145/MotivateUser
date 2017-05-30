@@ -1,5 +1,5 @@
 ﻿using System;
-using Gcm.Client;
+
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -7,6 +7,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Android.Util;
+using Gcm.Client;
 using Microsoft.WindowsAzure.MobileServices;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -55,12 +57,8 @@ namespace MotivationUser.Droid
             System.Diagnostics.Debug.WriteLine("accounts..." + accounts.FirstOrDefault());
             // Load the main application
             LoadApplication(new App(accounts.FirstOrDefault()));
-
-            
-        }
-        public void ConnectPush(string _userId)
-        {
-            PackageInfo info = this.PackageManager.GetPackageInfo("com.motivation.User", PackageInfoFlags.Signatures);
+            RegisterWithGCM();
+            /*  PackageInfo info = this.PackageManager.GetPackageInfo("com.motivation.User", PackageInfoFlags.Signatures);
 
             foreach (Android.Content.PM.Signature signature in info.Signatures)
             {
@@ -87,7 +85,18 @@ namespace MotivationUser.Droid
             catch (Exception e)
             {
                 CreateAndShowDialog(e.Message, "Error");
-            }
+            }*/
+
+        }
+        private void RegisterWithGCM()
+        {
+            // Check to ensure everything's set up right
+            GcmClient.CheckDevice(this);
+            GcmClient.CheckManifest(this);
+
+            // Register for push notifications
+            Log.Info("MainActivity", "Registering...");
+            GcmClient.Register(this, Constants.SenderID);
         }
         private void CreateAndShowDialog(String message, String title)
         {

@@ -172,7 +172,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GcmService.cs" />
     <Compile Include="LoginPageRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyBroadbastReceiver.cs" />

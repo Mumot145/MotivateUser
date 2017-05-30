@@ -69,7 +69,13 @@ namespace MotivationUser.Droid
             }
 
             //var tags = new List<string>() { "falcons" }; // create tags if you want
-            var tags = new List<string>() { };
+            var service = AzureDataService.DefaultService;
+            if (service.GetUser("fbId") != null)
+            {
+                int UserId = service.GetUser("fbId").Id;
+                Console.WriteLine("registered id is -===" + UserId.ToString());
+            }
+            var tags = new List<string>() { "4" };
 
             try
             {
